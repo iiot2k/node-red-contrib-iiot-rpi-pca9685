@@ -1,0 +1,111 @@
+<!--
+  Copyright 2022 Ocean (iiot2k@gmail.com).
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/javascript">
+    RED.nodes.registerType('pca9685-srv', {
+        category: 'iiot modules',
+        color: 'Coral',
+        paletteLabel: 'servo',
+        defaults: {
+            name:     { value: "" },
+            devadr:   { value: "0", required: true },
+            channel:  { value: 0, required: true, validate: function (v) { return (RED.validators.number(v) && (v >= 0) && (v <= 15)); } },
+            pos:      { value: 50, required: true, validate: function (v) { return (RED.validators.number(v) && (v >= 0) && (v <= 100)); } },
+            tlow:     { value: 500, required: true, validate: function (v) { return (RED.validators.number(v) && (v >= 300) && (v <= 1500)); } },
+            thigh:    { value: 2500, required: true, validate: function (v) { return (RED.validators.number(v) && (v >= 1000) && (v <= 3000)); } },
+            digital:  { value: false },
+        },
+        inputs: 1,
+        outputs: 0,
+        inputLabels: ["numeric value"],
+        icon: "font-awesome/fa-crosshairs",
+        labelStyle: function() { return this.name ? "node_label_italic" : ""; },
+        label: function () {
+            return this.name || "servo @" + (0x40 + parseInt(this.devadr)).toString(16).toUpperCase() + "#" + this.channel;
+        },
+    });
+</script>
+
+<script type="text/html" data-template-name="pca9685-srv">
+    <div class="form-row">
+        <label style="width:100%; border-bottom: 2px solid rgb(0, 0, 0);"><b>PCA9685 Servo</b></label>
+    </div>
+    <div id="div-devadr" class="form-row">
+        <label for="node-input-devadr"><b>I2C Address</b></label>
+        <select type="text" id="node-input-devadr" style="width: auto;">
+            <option value="0">40H</option>
+            <option value="1">41H</option>
+            <option value="2">42H</option>
+            <option value="3">43H</option>
+            <option value="4">44H</option>
+            <option value="5">45H</option>
+            <option value="6">46H</option>
+            <option value="7">47H</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-channel"><b>Channel</b></label>
+        <input id="node-input-channel" input type="number" min="0" max="15" required style="width: auto;">
+    </div>
+    <div class="form-row">
+        <label for="node-input-pos"><b>Init Pos</b></label>
+        <input id="node-input-pos" input type="number" min="0" max="100" required style="width: auto;">
+    </div>
+    <div class="form-row">
+        <label for="node-input-tlow"><b>Time-0</b></label>
+        <input id="node-input-tlow" input type="number" min="300" max="1500" required style="width: auto;">
+        <label for="node-input-tlow"> µS</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-thigh"><b>Time-100</b></label>
+        <input id="node-input-thigh" input type="number" min="1000" max="3000" required style="width: auto;">
+        <label for="node-input-thigh"> µS</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-digital"><b>Digital-Servo</b></label>
+        <input type="checkbox" id="node-input-digital" title="Check for digital servo" style="display: inline-block; width: auto; vertical-align: top;">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><b>Name</b></label>
+        <input id="node-input-name" type="text" title="Give this node a name">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="pca9685-srv">
+    <p>PCA9685 Servo</p>
+    <h3><b>Input:</b></h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">number</span></dt>
+    </dl>
+    <h3><b>Details:</b></h3>
+    <p>
+        PCA9685 Servo<br><br>
+        <p class="form-tips">
+            This node works on Raspberry Pi<br>
+            with 32bit or 64bit OS.<br>
+            Only first node sets frequency.<br>
+            Works with pwm frequency 50Hz.<br>
+            <b>Digital-Servo</b> sets to 290Hz.<br>
+            Input 0 turns servo left.<br>
+            Input 50 centers servo.<br>
+            Input 100 turns servo rigth.<br>
+            Be carefully on settings timing.<br> 
+            <b>Wrong timing damages servo.</b><br> 
+            Consult servo manual for timing.<br> 
+        </p>
+	</p>
+</script>
+
